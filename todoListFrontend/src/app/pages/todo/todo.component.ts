@@ -29,4 +29,8 @@ export class TodoComponent {
       }
     );
   }
+
+  onTaskDeleted(id: number) {
+    this.tasks = this.tasks.filter(task => task.id !== id);
+  }
 }

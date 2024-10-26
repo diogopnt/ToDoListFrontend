@@ -54,7 +54,7 @@ export class TaskService {
 
   // Remove uma tarefa pelo ID
   deleteTask(id: number): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`, {headers: this.headers });
   }
 
   // Retorna todas as tarefas completadas

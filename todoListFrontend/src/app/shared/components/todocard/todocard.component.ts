@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
-import { Task } from '../../../services/task.service';
+import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Task, TaskService } from '../../../services/task.service';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-todocard',
@@ -12,9 +13,31 @@ import { CommonModule } from '@angular/common';
 export class TodocardComponent {
   @Input() todo!: Task;
   showDetails: boolean = false;
+  @Output() taskDeleted = new EventEmitter<number>();
+  private subscription!: Subscription;
+
+  constructor(private taskService: TaskService) {}
 
   toggleDetails() {
     this.showDetails = !this.showDetails;
+  }
+
+  deleteTask() {
+    this.subscription = this.taskService.deleteTask(this.todo.id).subscribe({
+      next: () => {
+        console.log(`Task with ID ${this.todo.id} deleted successfully.`);
+        this.taskDeleted.emit(this.todo.id);
+      },
+      error: (error) => {
+        console.error('Error deleting task:', error);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
 }
