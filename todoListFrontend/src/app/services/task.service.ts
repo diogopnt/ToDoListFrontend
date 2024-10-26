@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Task {
@@ -28,6 +28,13 @@ export enum Prioritization {
 export class TaskService {
   private apiUrl = 'http://localhost:8080/api/v1/tasks';
 
+  
+  username = 'admin'; 
+  password = 'admin'; 
+  headers = new HttpHeaders({
+    'Authorization': 'Basic ' + btoa(this.username + ':' + this.password)
+  });
+
   constructor(private http: HttpClient) { }
 
   // Cria uma nova tarefa
@@ -37,7 +44,7 @@ export class TaskService {
 
   // Retorna todas as tarefas
   getAllTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/`);
+    return this.http.get<Task[]>(`${this.apiUrl}/`, {headers: this.headers });
   }
 
   // Atualiza uma tarefa existente

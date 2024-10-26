@@ -1,18 +1,15 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { TaskService } from './services/task.service';
 
 @NgModule({
-  declarations: [
-    AppComponent 
+  declarations: [ 
   ],
   imports: [
-    BrowserModule,    
-    HttpClientModule 
+    BrowserModule, 
   ],
   providers: [TaskService],
-  bootstrap: [AppComponent]
+  bootstrap: []
 })
 export class AppModule { }
