@@ -8,12 +8,25 @@ export interface Task {
   description: string;
   completed: boolean;
   category: string;
-  creationDate: string; // Formato ISO, como '2024-10-26T10:24:33'
+  creationDate: string;
   updateDate: string;
   deadline: string;
   prioritization: Prioritization;
   userId: number;
 }
+
+export interface NewTask {
+  title: string;
+  description: string;
+  completed: boolean;
+  category: string;
+  creationDate: string; 
+  updateDate: string; 
+  deadline: string; 
+  prioritization: Prioritization; 
+  userId: number; 
+}
+
 
 export enum Prioritization {
   LOW = 'LOW',
@@ -38,8 +51,8 @@ export class TaskService {
   constructor(private http: HttpClient) { }
 
   // Cria uma nova tarefa
-  createTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(`${this.apiUrl}/`, task);
+  createTask(task: NewTask): Observable<Task> {
+    return this.http.post<Task>(`${this.apiUrl}/`, task, {headers: this.headers });
   }
 
   // Retorna todas as tarefas
