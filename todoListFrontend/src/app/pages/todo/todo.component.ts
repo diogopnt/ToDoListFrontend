@@ -24,6 +24,9 @@ export class TodoComponent {
   filter: 'ALL' | 'COMPLETED' | 'INCOMPLETED' = 'ALL'; 
   selectedCategory: string | null = null;
   categories: string[] = [];
+  sortCriteria: 'creationDate' | 'deadline' = 'creationDate';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
 
   constructor(private taskService: TaskService, private fb: FormBuilder) {
     this.initializeForm();
@@ -84,6 +87,7 @@ export class TodoComponent {
     }
 
     this.filteredTasks = filtered;
+    this.sortTasks();
   }
   
   setFilter(filter: 'ALL' | 'COMPLETED' | 'INCOMPLETED') {
@@ -124,7 +128,6 @@ export class TodoComponent {
     console.log('Editing task:', this.selectedTask);
   }
   
-
   saveTask() {
     if (this.todoForm.valid) {
       let taskData: Task;
@@ -176,6 +179,29 @@ export class TodoComponent {
         );
       }
     }
-  }  
+  }
+  
+  sortTasks() {
+    this.filteredTasks.sort((a, b) => {
+      const dateA = new Date(a[this.sortCriteria]).getTime();
+      const dateB = new Date(b[this.sortCriteria]).getTime();
+      
+      if (this.sortDirection === 'asc') {
+        return dateA - dateB;
+      } else {
+        return dateB - dateA;
+      }
+    });
+  }
+
+  setSortCriteria(criteria: 'creationDate' | 'deadline') {
+    this.sortCriteria = criteria;
+    this.sortTasks();
+  }
+  
+  toggleSortDirection() {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    this.sortTasks();
+  }
   
 }

@@ -6,8 +6,9 @@
             + Add Task
         </button>
     </div>
-    
+
     <div class="mt-4 inline-flex gap-2">
+        <label class="font-semibold mr-2">Filter by:</label>
         <button class="btn btn-sm btn-outline-primary" (click)="setFilter('ALL')"
             [ngClass]="{ 'bg-blue-500 text-white border-blue-500': filter === 'ALL' }">
             ALL
@@ -28,6 +29,21 @@
         <button class="btn btn-sm btn-outline-primary" (click)="setCategoryFilter(null)"
             [ngClass]="{ 'bg-blue-500 text-white border-blue-500': selectedCategory === null }">
             All Categories
+        </button>
+
+        <label class="font-semibold mr-2">Sort by:</label>
+
+        <button class="btn btn-sm btn-outline-primary" (click)="setSortCriteria('creationDate')"
+            [ngClass]="{ 'bg-blue-500 text-white border-blue-500': sortCriteria === 'creationDate' }">
+            Creation Date
+        </button>
+        <button class="btn btn-sm btn-outline-primary" (click)="setSortCriteria('deadline')"
+            [ngClass]="{ 'bg-blue-500 text-white border-blue-500': sortCriteria === 'deadline' }">
+            Deadline
+        </button>
+        <button class="btn btn-sm btn-outline-primary" (click)="toggleSortDirection()"
+            [ngClass]="{ 'bg-blue-500 text-white border-blue-500': true }">
+            {{ sortDirection === 'asc' ? 'Oldest First' : 'Newest First' }}
         </button>
     </div>
 
