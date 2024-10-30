@@ -24,7 +24,7 @@ export class TodocardComponent {
   }
 
   onEdit() {
-    this.editTask.emit(this.todo); // Emite o evento com a tarefa atual para edição
+    this.editTask.emit(this.todo);
   }
 
   deleteTask() {
@@ -44,5 +44,4 @@ export class TodocardComponent {
       this.subscription.unsubscribe();
     }
   }
-
 }

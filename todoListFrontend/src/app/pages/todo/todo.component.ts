@@ -20,6 +20,8 @@ export class TodoComponent {
   prioritizations = Object.values(Prioritization);
   minDate: string;
   selectedTask: Task | null = null;
+  filteredTasks: Task[] = [];
+  filter: 'ALL' | 'COMPLETED' | 'INCOMPLETED' = 'ALL'; 
 
   constructor(private taskService: TaskService, private fb: FormBuilder) {
     this.initializeForm();
@@ -53,12 +55,35 @@ export class TodoComponent {
     this.taskService.getAllTasks().subscribe(
       (data: Task[]) => {
         this.tasks = data;
+        this.applyFilter();
       },
       (error) => {
         console.error('Error', error);
       }
     );
   }
+
+    applyFilter() {
+      switch (this.filter) {
+        case 'COMPLETED':
+          this.taskService.getAllCompletedTasks().subscribe(
+            (data: Task[]) => (this.filteredTasks = data)
+          );
+          break;
+        case 'INCOMPLETED':
+          this.taskService.getAllIncompleteTasks().subscribe(
+            (data: Task[]) => (this.filteredTasks = data)
+          );
+          break;
+        default:
+          this.filteredTasks = this.tasks;
+      }
+    }
+  
+    setFilter(filter: 'ALL' | 'COMPLETED' | 'INCOMPLETED') {
+      this.filter = filter;
+      this.applyFilter();
+    }
 
   onTaskDeleted(id: number) {
     this.tasks = this.tasks.filter(task => task.id !== id);

@@ -50,42 +50,34 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
-  // Cria uma nova tarefa
   createTask(task: NewTask): Observable<Task> {
     return this.http.post<Task>(`${this.apiUrl}/`, task, {headers: this.headers });
   }
 
-  // Retorna todas as tarefas
   getAllTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.apiUrl}/`, {headers: this.headers });
   }
 
-  // Atualiza uma tarefa existente
   updateTask(id: number, task: Task): Observable<Task> {
     return this.http.put<Task>(`${this.apiUrl}/${id}`, task, {headers: this.headers });
   }
 
-  // Remove uma tarefa pelo ID
   deleteTask(id: number): Observable<boolean> {
     return this.http.delete<boolean>(`${this.apiUrl}/${id}`, {headers: this.headers });
   }
 
-  // Retorna todas as tarefas completadas
   getAllCompletedTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/completed`);
+    return this.http.get<Task[]>(`${this.apiUrl}/completed`, {headers: this.headers });
   }
 
-  // Retorna todas as tarefas incompletas
   getAllIncompleteTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/incomplete`);
+    return this.http.get<Task[]>(`${this.apiUrl}/incomplete`, {headers: this.headers });
   }
 
-  // Filtra tarefas por categoria
   filterByCategory(category: string): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.apiUrl}/filterCategory/${category}`);
   }
 
-  // Filtra tarefas por prazo (deadline)
   filterByDeadline(deadline: string): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.apiUrl}/filterDeadline/${deadline}`);
   }
