@@ -62,7 +62,7 @@ export class TaskService {
 
   // Atualiza uma tarefa existente
   updateTask(id: number, task: Task): Observable<Task> {
-    return this.http.put<Task>(`${this.apiUrl}/${id}`, task);
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, task, {headers: this.headers });
   }
 
   // Remove uma tarefa pelo ID

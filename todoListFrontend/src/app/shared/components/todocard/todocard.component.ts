@@ -15,11 +15,16 @@ export class TodocardComponent {
   showDetails: boolean = false;
   @Output() taskDeleted = new EventEmitter<number>();
   private subscription!: Subscription;
+  @Output() editTask = new EventEmitter<Task>();
 
   constructor(private taskService: TaskService) {}
 
   toggleDetails() {
     this.showDetails = !this.showDetails;
+  }
+
+  onEdit() {
+    this.editTask.emit(this.todo); // Emite o evento com a tarefa atual para edição
   }
 
   deleteTask() {

@@ -19,6 +19,7 @@ export class TodoComponent {
   isSlidePanelOpen = false;
   prioritizations = Object.values(Prioritization);
   minDate: string;
+  selectedTask: Task | null = null;
 
   constructor(private taskService: TaskService, private fb: FormBuilder) {
     this.initializeForm();
@@ -44,6 +45,7 @@ export class TodoComponent {
       prioritization: new FormControl('', [Validators.required]),
       category: new FormControl('', [Validators.required]),
       deadline: new FormControl('', [Validators.required]),
+      completed: new FormControl(false)
     });
   }
 
@@ -58,35 +60,6 @@ export class TodoComponent {
     );
   }
 
-  onSubmit() {
-    if (this.todoForm.valid) {
-      const newTask: NewTask = {
-        title: this.todoForm.value.title,
-        description: this.todoForm.value.description,
-        completed: false,
-        category: this.todoForm.value.category,
-        creationDate: new Date().toISOString(), 
-        updateDate: new Date().toISOString(), 
-        deadline: new Date(this.todoForm.value.deadline).toISOString(), 
-        prioritization: this.todoForm.value.prioritization, 
-        userId: 1 // ID fixo
-      };
-  
-      console.log('New Task:', newTask); 
-  
-      this.taskService.createTask(newTask).subscribe(
-        (createdTask: Task) => {
-          this.tasks.push(createdTask); 
-          this.isSlidePanelOpen = false; 
-          this.todoForm.reset();
-        },
-        (error) => {
-          console.error('Error creating task', error);
-        }
-      );
-    }
-  }
-
   onTaskDeleted(id: number) {
     this.tasks = this.tasks.filter(task => task.id !== id);
   }
@@ -97,5 +70,69 @@ export class TodoComponent {
 
   onCloseSlidePanel() {
     this.isSlidePanelOpen = false;
+    this.selectedTask = null;
+    this.todoForm.reset(); 
+  }  
+
+  openEditPanel(task: Task) {
+    this.selectedTask = task;
+    const formattedDeadline = task.deadline ? task.deadline.split('T')[0] : null;
+    this.todoForm.patchValue({ ...task, deadline: formattedDeadline });
+    this.isSlidePanelOpen = true;
+    console.log('Editing task:', this.selectedTask);
   }
+  
+
+  saveTask() {
+    if (this.todoForm.valid) {
+      let taskData: Task;
+  
+      if (this.selectedTask && this.selectedTask.id) {
+        taskData = {
+          ...this.todoForm.value,
+          id: this.selectedTask.id,
+          userId: this.selectedTask.userId,
+          creationDate: this.selectedTask.creationDate,  
+          updateDate: new Date().toISOString(),  
+          deadline: new Date(this.todoForm.value.deadline).toISOString(),
+        };
+  
+        console.log('Updating task:', taskData);
+  
+        this.taskService.updateTask(taskData.id, taskData).subscribe(
+          (updatedTask: Task) => {
+            const index = this.tasks.findIndex(t => t.id === taskData.id);
+            if (index !== -1) {
+              this.tasks[index] = updatedTask;
+            }
+            this.onCloseSlidePanel();
+          },
+          error => console.error('Error updating task', error)
+        );
+      } else {
+        const newTask: NewTask = {
+          title: this.todoForm.value.title,
+          description: this.todoForm.value.description,
+          completed: false,
+          category: this.todoForm.value.category,
+          creationDate: new Date().toISOString(),
+          updateDate: new Date().toISOString(),
+          deadline: new Date(this.todoForm.value.deadline).toISOString(),
+          prioritization: this.todoForm.value.prioritization,
+          userId: 1 // ID fixo
+        };
+  
+        console.log('Creating new task:', newTask);
+  
+        this.taskService.createTask(newTask).subscribe(
+          (createdTask: Task) => {
+            this.tasks.push(createdTask);
+            this.onCloseSlidePanel();
+          },
+          error => console.error('Error creating task', error)
+        );
+      }
+    }
+  }  
+  
 }
