@@ -74,10 +74,6 @@ export class TaskService {
     return this.http.get<Task[]>(`${this.apiUrl}/incomplete`, {headers: this.headers });
   }
 
-  filterByCategory(category: string): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/filterCategory/${category}`);
-  }
-
   filterByDeadline(deadline: string): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.apiUrl}/filterDeadline/${deadline}`);
   }

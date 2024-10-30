@@ -6,8 +6,7 @@
             + Add Task
         </button>
     </div>
-
-
+    
     <div class="mt-4 inline-flex gap-2">
         <button class="btn btn-sm btn-outline-primary" (click)="setFilter('ALL')"
             [ngClass]="{ 'bg-blue-500 text-white border-blue-500': filter === 'ALL' }">
@@ -21,8 +20,16 @@
             [ngClass]="{ 'bg-blue-500 text-white border-blue-500': filter === 'INCOMPLETED' }">
             INCOMPLETED
         </button>
+        <button *ngFor="let category of categories" class="btn btn-sm btn-outline-primary"
+            (click)="setCategoryFilter(category)"
+            [ngClass]="{ 'bg-blue-500 text-white border-blue-500': selectedCategory === category }">
+            {{ category }}
+        </button>
+        <button class="btn btn-sm btn-outline-primary" (click)="setCategoryFilter(null)"
+            [ngClass]="{ 'bg-blue-500 text-white border-blue-500': selectedCategory === null }">
+            All Categories
+        </button>
     </div>
-
 
     <div class="mt-3 bg-white shadow p-4 rounded-lg">
         <app-todocard *ngFor="let task of filteredTasks" [todo]="task" (taskDeleted)="onTaskDeleted($event)"

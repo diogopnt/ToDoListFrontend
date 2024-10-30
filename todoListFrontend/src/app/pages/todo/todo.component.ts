@@ -22,6 +22,8 @@ export class TodoComponent {
   selectedTask: Task | null = null;
   filteredTasks: Task[] = [];
   filter: 'ALL' | 'COMPLETED' | 'INCOMPLETED' = 'ALL'; 
+  selectedCategory: string | null = null;
+  categories: string[] = [];
 
   constructor(private taskService: TaskService, private fb: FormBuilder) {
     this.initializeForm();
@@ -56,6 +58,7 @@ export class TodoComponent {
       (data: Task[]) => {
         this.tasks = data;
         this.applyFilter();
+        this.extractCategories();
       },
       (error) => {
         console.error('Error', error);
@@ -63,30 +66,44 @@ export class TodoComponent {
     );
   }
 
-    applyFilter() {
-      switch (this.filter) {
-        case 'COMPLETED':
-          this.taskService.getAllCompletedTasks().subscribe(
-            (data: Task[]) => (this.filteredTasks = data)
-          );
-          break;
-        case 'INCOMPLETED':
-          this.taskService.getAllIncompleteTasks().subscribe(
-            (data: Task[]) => (this.filteredTasks = data)
-          );
-          break;
-        default:
-          this.filteredTasks = this.tasks;
-      }
+  extractCategories() {
+    const categoriesSet = new Set(this.tasks.map(task => task.category));
+    this.categories = Array.from(categoriesSet);
+  }
+
+  applyFilter() {
+    let filtered = this.tasks;
+    if (this.filter === 'COMPLETED') {
+      filtered = filtered.filter(task => task.completed);
+    } else if (this.filter === 'INCOMPLETED') {
+      filtered = filtered.filter(task => !task.completed);
     }
+
+    if (this.selectedCategory) {
+      filtered = filtered.filter(task => task.category === this.selectedCategory);
+    }
+
+    this.filteredTasks = filtered;
+  }
   
-    setFilter(filter: 'ALL' | 'COMPLETED' | 'INCOMPLETED') {
-      this.filter = filter;
-      this.applyFilter();
-    }
+  setFilter(filter: 'ALL' | 'COMPLETED' | 'INCOMPLETED') {
+    this.filter = filter;
+    this.applyFilter();
+  }
+
+  setCategoryFilter(category: string | null) {
+    this.selectedCategory = category;
+    this.applyFilter();
+  }
 
   onTaskDeleted(id: number) {
     this.tasks = this.tasks.filter(task => task.id !== id);
+    this.extractCategories(); 
+
+    if (this.selectedCategory && !this.categories.includes(this.selectedCategory)) {
+      this.selectedCategory = null;
+    }
+    this.applyFilter();
   }
 
   openSlidePanel() {
@@ -152,6 +169,7 @@ export class TodoComponent {
         this.taskService.createTask(newTask).subscribe(
           (createdTask: Task) => {
             this.tasks.push(createdTask);
+            this.extractCategories();
             this.onCloseSlidePanel();
           },
           error => console.error('Error creating task', error)
