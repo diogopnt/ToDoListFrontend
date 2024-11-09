@@ -2,14 +2,11 @@
     <div class="container flex items-center justify-between px-8">
         <h4 class="font-bold text-xl">To-Do List ES Project</h4>
         <div class="flex gap-3">
-            <!--
-        @if (this.isAuthenticated$| async) {
-        <div class="px-2 font-medium cursor-pointer">Todos</div>
-        <div class="px-2 font-medium cursor-pointer" (click)="onLogout()">Logout</div>
-        }@else {
-        <div class="px-2 font-medium cursor-pointer">Login</div>
-        }-->
-            <div class="px-2 font-medium cursor-pointer">Login</div>
+            <div class="px-2 font-medium cursor-pointer" *ngIf="authService.isAuthenticated$ | async; else showLogin"
+                (click)="onLogout()">Logout</div>
+            <ng-template #showLogin>
+                <div class="px-2 font-medium cursor-pointer" (click)="onLogin()">Login</div>
+            </ng-template>
         </div>
     </div>
 </header>

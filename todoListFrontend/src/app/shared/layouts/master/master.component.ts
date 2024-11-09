@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-master',
@@ -10,6 +11,12 @@ import { HeaderComponent } from '../header/header.component';
   templateUrl: './master.component.html',
   styleUrl: './master.component.scss'
 })
-export class MasterComponent {
+export class MasterComponent implements OnInit {
+  
+  constructor(private authService: AuthService) {}
+
+  ngOnInit() {
+    this.authService.handleRedirectCallback();
+  }
 
 }

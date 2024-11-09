@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { throwError } from 'rxjs';
 
 export interface Task {
   id: number;
@@ -12,7 +13,7 @@ export interface Task {
   updateDate: string;
   deadline: string;
   prioritization: Prioritization;
-  userId: number;
+  userId: string;
 }
 
 export interface NewTask {
@@ -23,8 +24,7 @@ export interface NewTask {
   creationDate: string; 
   updateDate: string; 
   deadline: string; 
-  prioritization: Prioritization; 
-  userId: number; 
+  prioritization: Prioritization;
 }
 
 
@@ -41,40 +41,103 @@ export enum Prioritization {
 export class TaskService {
   private apiUrl = 'http://localhost:8080/api/v1/tasks';
 
-  
-  username = 'admin'; 
-  password = 'admin'; 
-  headers = new HttpHeaders({
-    'Authorization': 'Basic ' + btoa(this.username + ':' + this.password)
-  });
 
   constructor(private http: HttpClient) { }
 
   createTask(task: NewTask): Observable<Task> {
-    return this.http.post<Task>(`${this.apiUrl}/`, task, {headers: this.headers });
+    const token = localStorage.getItem('token'); 
+    if (!token) {
+        console.error("Token JWT não encontrado no localStorage.");
+        return throwError("Token não encontrado.");
+    }
+
+    //console.log("Token JWT:", token);
+
+    const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.post<Task>(`${this.apiUrl}/`, task, { headers });
   }
 
   getAllTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/`, {headers: this.headers });
+    const token = localStorage.getItem('token'); 
+    if (!token) {
+        console.error("Token JWT não encontrado no localStorage.");
+        return throwError("Token não encontrado.");
+    }
+
+    //console.log("Token JWT:", token);
+
+    const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+    });
+
+
+    return this.http.get<Task[]>(`${this.apiUrl}/`, { headers });
   }
 
   updateTask(id: number, task: Task): Observable<Task> {
-    return this.http.put<Task>(`${this.apiUrl}/${id}`, task, {headers: this.headers });
+    const token = localStorage.getItem('token'); 
+    if (!token) {
+        console.error("Token JWT não encontrado no localStorage.");
+        return throwError("Token não encontrado.");
+    }
+
+    //console.log("Token JWT:", token);
+
+    const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, task, { headers });
   }
 
   deleteTask(id: number): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/${id}`, {headers: this.headers });
+    const token = localStorage.getItem('token'); 
+    if (!token) {
+        console.error("Token JWT não encontrado no localStorage.");
+        return throwError("Token não encontrado.");
+    }
+
+    //console.log("Token JWT:", token);
+
+    const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`, { headers });
   }
 
   getAllCompletedTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/completed`, {headers: this.headers });
+    const token = localStorage.getItem('token'); 
+    if (!token) {
+        console.error("Token JWT não encontrado no localStorage.");
+        return throwError("Token não encontrado.");
+    }
+
+    //console.log("Token JWT:", token);
+
+    const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<Task[]>(`${this.apiUrl}/completed`, { headers });
   }
 
   getAllIncompleteTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/incomplete`, {headers: this.headers });
-  }
+    const token = localStorage.getItem('token'); 
+    if (!token) {
+        console.error("Token JWT não encontrado no localStorage.");
+        return throwError("Token não encontrado.");
+    }
 
-  filterByDeadline(deadline: string): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/filterDeadline/${deadline}`);
+    //console.log("Token JWT:", token);
+
+    const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<Task[]>(`${this.apiUrl}/incomplete`, { headers });
   }
 }

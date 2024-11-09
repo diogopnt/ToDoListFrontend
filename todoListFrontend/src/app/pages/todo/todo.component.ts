@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { SlidePanelComponent } from '../../shared/ui/slide-panel/slide-panel.component';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Prioritization } from '../../services/task.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-todo',
@@ -28,7 +29,7 @@ export class TodoComponent {
   sortDirection: 'asc' | 'desc' = 'asc';
 
 
-  constructor(private taskService: TaskService, private fb: FormBuilder) {
+  constructor(private taskService: TaskService, private authService: AuthService, private fb: FormBuilder) {
     this.initializeForm();
     this.minDate = this.getCurrentDate(); 
   }
@@ -42,7 +43,11 @@ export class TodoComponent {
   }
 
   ngOnInit() {
-    this.getAllTasks();
+    this.authService.token$.subscribe((token) => {
+      if (token) {
+        this.getAllTasks();
+      }
+    });
   }
 
   initializeForm() {
@@ -130,6 +135,7 @@ export class TodoComponent {
   
   saveTask() {
     if (this.todoForm.valid) {
+      //const userId = this.authService.getUserSubId();
       let taskData: Task;
   
       if (this.selectedTask && this.selectedTask.id) {
@@ -164,7 +170,7 @@ export class TodoComponent {
           updateDate: new Date().toISOString(),
           deadline: new Date(this.todoForm.value.deadline).toISOString(),
           prioritization: this.todoForm.value.prioritization,
-          userId: 1 // ID fixo
+          //userId: userId!
         };
   
         console.log('Creating new task:', newTask);
