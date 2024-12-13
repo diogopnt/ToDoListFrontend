@@ -31,7 +31,7 @@ export class AuthService {
   }
 
   private exchangeCodeForToken(code: string) {
-    this.http.get<any>(`http://localhost:8080/api/token/get?code=${code}`).subscribe({
+    this.http.get<any>(`https://es-ua.ddns.net:444/api/token/get?code=${code}`).subscribe({
       next: (response) => {
         const tokenObject = JSON.parse(response.token);
         this.setToken(tokenObject.id_token);
